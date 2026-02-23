@@ -1,0 +1,414 @@
+@font-face {
+  font-family: 'FAIRY';
+  src: url('fonts/FAIRYFONT.otf') format('truetype');
+}
+@font-face {
+  font-family: 'TALE';
+  src: url('fonts/TALE.ttf') format('truetype');
+}
+
+/* ── Keyframes ────────────────────────────────────────────── */
+@keyframes bubbleRise {
+  0%   { transform: translateY(110vh) translateX(0px) scale(0.8);  opacity: 0; }
+  10%  { opacity: 0.6; }
+  50%  { transform: translateY(50vh)  translateX(30px) scale(1); }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(-10vh) translateX(-20px) scale(1.1); opacity: 0; }
+}
+@keyframes bubbleWobble {
+  0%, 100% { border-radius: 50%; transform: scaleX(1) scaleY(1); }
+  25%       { border-radius: 48% 52% 50% 50%; transform: scaleX(1.04) scaleY(0.96); }
+  75%       { border-radius: 52% 48% 50% 50%; transform: scaleX(0.96) scaleY(1.04); }
+}
+@keyframes sparkleFall {
+  0%   { transform: translateY(-5vh) rotate(0deg) scale(0);   opacity: 0; }
+  10%  { opacity: 1; transform: scale(1); }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(110vh) rotate(540deg) scale(0.5); opacity: 0; }
+}
+@keyframes sparkleGlow {
+  0%, 100% { box-shadow: 0 0 4px 2px rgba(255,200,50,0.6); transform: scale(1) rotate(0deg); }
+  50%       { box-shadow: 0 0 12px 6px rgba(255,200,50,1);  transform: scale(1.4) rotate(180deg); }
+}
+@keyframes sunRay {
+  0%, 100% { opacity: 0.15; }
+  50%       { opacity: 0.35; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1);    filter: brightness(1); }
+  20%       { transform: scale(1.1); filter: brightness(1.2); }
+  40%       { transform: scale(1); }
+  60%       { transform: scale(1.05); filter: brightness(1.1); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes glimmer {
+  0%, 100% { opacity: 0.5; transform: scale(0.8) rotate(0deg); }
+  50%       { opacity: 1;   transform: scale(1.2) rotate(45deg); }
+}
+@keyframes scratchUnlock {
+  0%   { box-shadow: 0 5px 22px rgba(200,100,0,0.2); }
+  50%  { box-shadow: 0 8px 40px rgba(255,200,80,0.55); }
+  100% { box-shadow: 0 5px 22px rgba(200,100,0,0.2); }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50%       { opacity: 1;   transform: scale(1.3); }
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ── CSS custom properties (overridden by JS on scroll) ─── */
+:root {
+  --sky-top:    #1a0533;
+  --sky-mid1:   #6b1a3a;
+  --sky-mid2:   #c0392b;
+  --sky-mid3:   #e8622a;
+  --sky-mid4:   #f0a500;
+  --sky-mid5:   #f7c948;
+  --sky-mid6:   #f4a261;
+  --sky-mid7:   #e76f51;
+  --sky-mid8:   #c1440e;
+  --sky-bot:    #7b1a3a;
+  --sun-opacity:  1;
+  --star-opacity: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(
+    160deg,
+    var(--sky-top)  0%,
+    var(--sky-mid1) 10%,
+    var(--sky-mid2) 22%,
+    var(--sky-mid3) 35%,
+    var(--sky-mid4) 48%,
+    var(--sky-mid5) 58%,
+    var(--sky-mid6) 68%,
+    var(--sky-mid7) 78%,
+    var(--sky-mid8) 88%,
+    var(--sky-bot)  100%
+  );
+  font-family: 'TALE', 'Georgia', serif;
+  color: #fff8ef;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Sun ──────────────────────────────────────────────── */
+.sunset-sun {
+  position: fixed;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px; height: 220px;
+  background: radial-gradient(circle at 50% 50%,
+    #fff7a1 0%, #ffe066 20%, #ffa500 50%, #ff6b00 70%, transparent 100%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(2px);
+  box-shadow: 0 0 80px 40px rgba(255,160,0,0.4), 0 0 200px 100px rgba(255,100,0,0.2);
+  opacity: var(--sun-opacity);
+  transition: opacity 0.5s ease;
+}
+
+/* Moon that fades in on scroll */
+.sunset-sun::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 140px; height: 140px;
+  background: radial-gradient(circle at 38% 38%,
+    #e8f0ff 0%, #c5d8ff 30%, #8aafd4 60%, transparent 100%
+  );
+  border-radius: 50%;
+  opacity: var(--star-opacity);
+  filter: blur(1px);
+  box-shadow: 0 0 40px 20px rgba(150,180,255,0.3);
+  transition: opacity 0.5s ease;
+}
+
+.sun-ray {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  width: 3px;
+  height: 60vh;
+  background: linear-gradient(to top, rgba(255,200,0,0.25), transparent);
+  transform-origin: bottom center;
+  pointer-events: none;
+  z-index: 0;
+  animation: sunRay ease-in-out infinite;
+  opacity: var(--sun-opacity);
+  transition: opacity 0.5s ease;
+}
+
+.horizon {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100%; height: 120px;
+  background: linear-gradient(to top,
+    rgba(100,20,20,0.5) 0%, rgba(180,60,20,0.2) 50%, transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  filter: blur(15px);
+}
+
+/* ── Bubbles ─────────────────────────────────────────── */
+.bubble {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+  animation: bubbleRise linear infinite, bubbleWobble ease-in-out infinite;
+  background: radial-gradient(
+    circle at 35% 35%,
+    rgba(255,255,255,0.55) 0%,
+    rgba(255,220,150,0.15) 40%,
+    rgba(255,160,80,0.08) 70%,
+    transparent 100%
+  );
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.3), 0 0 6px rgba(255,200,100,0.3);
+}
+
+/* ── Sparkles ─────────────────────────────────────────── */
+.sparkle {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  background: #ffe066;
+  animation: sparkleFall linear infinite, sparkleGlow ease-in-out infinite;
+}
+
+.glimmer {
+  position: fixed;
+  font-size: 18px;
+  pointer-events: none;
+  z-index: 3;
+  color: #ffe066;
+  text-shadow: 0 0 10px rgba(255,200,0,0.8);
+  animation: glimmer ease-in-out infinite, sparkleFall linear infinite;
+  filter: drop-shadow(0 0 6px rgba(255,180,0,0.9));
+}
+
+/* ── Night stars ──────────────────────────────────────── */
+.night-star {
+  position: fixed;
+  border-radius: 50%;
+  background: #e8f4ff;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 0 0 6px 2px rgba(180,210,255,0.6);
+  opacity: 0;
+  animation: twinkle ease-in-out infinite;
+}
+
+/* ── Content wrapper ──────────────────────────────────── */
+.content-wrapper {
+  position: relative;
+  z-index: 10;
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 20px 100px;
+  animation: fadeInUp 1.2s ease both;
+}
+
+header { text-align: center; padding: 1rem 0 2rem; }
+
+h1 {
+  font-family: 'FAIRY', 'TALE', serif;
+  font-size: clamp(1.3rem, 4vw, 2rem);
+  font-style: italic;
+  color: #ffe066;
+  text-shadow: 0 0 30px rgba(255,180,0,0.7), 0 0 60px rgba(255,120,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+  letter-spacing: 0.08em;
+  animation: heartPulse 6s ease-in-out infinite;
+}
+
+/* ── Glass cards ──────────────────────────────────────── */
+.glass-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 30px;
+  padding: 44px 40px;
+  margin-bottom: 36px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 8px 48px rgba(200,80,0,0.2),
+    0 2px 8px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -1px 0 rgba(255,200,100,0.1);
+  color: #fff8ef;
+  line-height: 1.95;
+  text-align: center;
+  transition: box-shadow 0.8s ease, border-color 0.8s ease;
+}
+
+.glass-card.night-mode {
+  box-shadow:
+    0 8px 48px rgba(30,80,160,0.3),
+    0 2px 8px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(180,220,255,0.35),
+    inset 0 -1px 0 rgba(100,160,255,0.08);
+  border-color: rgba(180,220,255,0.25);
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+}
+.glass-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(to top, rgba(255,160,50,0.06), transparent);
+  pointer-events: none;
+}
+
+.glass-card img {
+  display: block;
+  max-width: 82%;
+  border-radius: 20px;
+  margin: 28px auto;
+  box-shadow: 0 0 30px rgba(255,140,0,0.35), 0 4px 20px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.4);
+  animation: float 7s ease-in-out infinite, heartPulse 5s ease-in-out infinite;
+}
+
+.textStory {
+  font-family: 'TALE', 'Georgia', serif;
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  line-height: 2;
+  color: #fff8ef;
+  text-shadow: 0 1px 8px rgba(200,80,0,0.3);
+  margin-bottom: 1rem;
+}
+
+/* ── Input section (raccoon page link) ───────────────── */
+.greetings {
+  font-family: 'TALE', serif;
+  font-size: clamp(0.9rem, 2.5vw, 1.08rem);
+  color: rgba(255,240,200,0.88);
+  font-style: italic;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Constellation ────────────────────────────────────── */
+.constellation-section { text-align: center; margin-top: 2rem; }
+
+.constellation-hint {
+  font-family: 'TALE', serif;
+  font-size: clamp(1rem, 3vw, 1.15rem);
+  color: #fff8ef;
+  margin-bottom: 1rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  min-height: 1.4em;
+  text-shadow:
+    0 0 12px rgba(255,200,80,0.7),
+    0 1px 3px rgba(0,0,0,0.5);
+  transition: color 0.4s;
+}
+
+.constellation-wrap {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto 1.6rem;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.28);
+  box-shadow:
+    0 0 30px rgba(255,140,30,0.18),
+    0 4px 24px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+#constellationCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* ── Go button ────────────────────────────────────────── */
+.go-btn {
+  font-family: 'FAIRY', 'TALE', sans-serif;
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, rgba(255,200,80,0.18), rgba(255,120,50,0.10));
+  color: #ffe066;
+  border: 1px solid rgba(255,200,80,0.45);
+  border-radius: 40px;
+  box-shadow: 0 5px 22px rgba(200,100,0,0.2);
+  cursor: not-allowed;
+  backdrop-filter: blur(6px);
+  transition: all 0.4s ease;
+  opacity: 0.38;
+  width: 80%;
+  max-width: 320px;
+  display: block;
+  margin: 0 auto;
+}
+.go-btn.unlocked {
+  cursor: pointer;
+  opacity: 1;
+  animation: heartPulse 2.5s ease-in-out infinite, scratchUnlock 2s ease-in-out infinite;
+}
+.go-btn.unlocked:hover {
+  transform: translateY(-3px) scale(1.04);
+  background: linear-gradient(135deg, rgba(255,200,80,0.35), rgba(255,120,50,0.22));
+  border-color: rgba(255,200,80,0.8);
+  animation-play-state: paused;
+}
+.go-btn.unlocked:active { transform: translateY(0) scale(0.97); }
+
+/* ── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: rgba(255,150,50,0.1); }
+::-webkit-scrollbar-thumb { background: rgba(255,160,50,0.4); border-radius: 3px; }
+
+/* ── Responsive ────────────────────────────────── */
+@media (max-width: 768px) {
+  .content-wrapper { padding: 28px 14px 80px; }
+  .glass-card      { padding: 32px 22px; }
+  .glass-card img  { max-width: 96%; }
+  .go-btn          { width: 95%; font-size: 1rem; }
+  .constellation-wrap { max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .content-wrapper { padding: 20px 10px 60px; }
+  .glass-card      { padding: 24px 14px; border-radius: 20px; }
+  .glass-card img  { max-width: 100%; border-radius: 14px; }
+  .go-btn          { width: 98%; font-size: 0.95rem; padding: 0.85rem 1.5rem; }
+  .constellation-wrap { max-width: 100%; border-radius: 14px; }
+  .constellation-hint { font-size: 0.92rem; }
+  h1               { font-size: clamp(1.1rem, 4.5vw, 1.6rem); }
+}
