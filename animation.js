@@ -49,7 +49,6 @@ const backgrounds = [
 ];
 
 const TOTAL_PAGES = 7;
-const LAST_INDEX  = 6;
 
 let clickCount = 0;
 
@@ -89,7 +88,7 @@ function createPage(index) {
 
   const progressBar = document.createElement('div');
   progressBar.className = 'progress-bar';
-  progressBar.innerHTML = `<div class="progress-fill" style="width:${(index / LAST_INDEX) * 100}%;"></div>`;
+  progressBar.innerHTML = `<div class="progress-fill" style="width:${(index / (TOTAL_PAGES - 1)) * 100}%;"></div>`;
   container.appendChild(progressBar);
 
   const message = document.createElement('div');
@@ -109,7 +108,7 @@ function createPage(index) {
     <source src="${raccoonVideos[index]}" type="video/mp4" />
   </video>`;
 
-  const speed = 5.5 - (Math.min(index, LAST_INDEX) / LAST_INDEX) * (5.5 - 0.6);
+  const speed = 5.5 - (Math.min(index, TOTAL_PAGES - 1) / (TOTAL_PAGES - 1)) * (5.5 - 0.6);
   raccoon.style.setProperty('--heartbeat-speed', `${speed.toFixed(2)}s`);
 
   raccoonContainer.appendChild(raccoon);
@@ -189,7 +188,7 @@ function showFinalScreen() {
     return el;
   });
 
-  const [t1, t2, t3, t4] = textEls;
+  const [textOh, textFilled, textILove, textDoYouLoveMe] = textEls;
 
   const buttonsContainer = document.createElement('div');
   buttonsContainer.id = 'buttonsContainer';
@@ -219,10 +218,10 @@ function showFinalScreen() {
     }, delay);
   }
 
-  show(t1, 500);
-  show(t2, 2000);  hide(t2, 4000);
-  show(t3, 4500);
-  show(t4, 6500);
+  show(textOh, 500);
+  show(textFilled, 2000);  hide(textFilled, 4000);
+  show(textILove, 4500);
+  show(textDoYouLoveMe, 6500);
 
   setTimeout(() => {
     buttonsContainer.style.display = 'flex';
@@ -230,10 +229,8 @@ function showFinalScreen() {
   }, 8500);
 
   function showFarewell() {
-    if (showFarewell.fired) return;   // ← guard: run once only
+    if (showFarewell.fired) return;
     showFarewell.fired = true;
-
-    // Disable all buttons immediately so further taps do nothing
     buttonsContainer.querySelectorAll('.answer-button').forEach(b => {
       b.disabled = true;
       b.style.pointerEvents = 'none';
@@ -258,19 +255,28 @@ function showFinalScreen() {
       farewell.id = 'farewell-text';
       overlay.appendChild(farewell);
 
-      [
-        { text: 'Так',               size: '5.5rem', delay: 500  },
-        { text: 'Завжди і назавжди', size: '2.2rem', delay: 2200 },
-        { text: 'Твій єнот',         size: '1.7rem', delay: 4000 }
-      ].forEach(({ text, size, delay }) => {
+      const words = [
+        { text: 'Так',               cls: 'word-1', size: '6.5rem', reveal: 500,   animDur: 4.5, breath: 5000  },
+        { text: 'Завжди і назавжди', cls: 'word-2', size: '2.5rem', reveal: 5000,  animDur: 4.5, breath: 9500  },
+        { text: 'Твій єнот',         cls: 'word-3', size: '2rem',   reveal: 10500, animDur: 3.5, breath: 14000 },
+      ];
+
+      words.forEach(({ text, cls, size, reveal, animDur, breath }) => {
         const el = document.createElement('div');
-        el.className = 'farewell-line';
+        el.className = `farewell-line ${cls}`;
         el.textContent = text;
         el.style.fontSize = size;
         farewell.appendChild(el);
+
         setTimeout(() => {
-          el.style.animation = 'farewellReveal 1.8s cubic-bezier(0.2,0,0.3,1) forwards';
-        }, delay);
+          el.style.animation = `epicWordReveal ${animDur}s cubic-bezier(0.16, 1, 0.3, 1) forwards`;
+        }, reveal);
+
+        setTimeout(() => {
+          el.style.animation =
+            'epicWordBreath 5s ease-in-out infinite, subtleBreath 8s ease-in-out infinite';
+          el.style.opacity = '1';
+        }, breath);
       });
 
       setTimeout(() => {
@@ -280,9 +286,9 @@ function showFinalScreen() {
         requestAnimationFrame(() => requestAnimationFrame(() => {
           blackout.style.opacity = '1';
         }));
-      }, 13000);
+      }, 21000);
 
-    }, 800);
+    }, 900);
   }
 }
 

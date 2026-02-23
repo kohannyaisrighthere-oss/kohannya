@@ -2,17 +2,14 @@ const inputField = document.getElementById('secret-input');
 const checkBtn   = document.getElementById('check-btn');
 const message    = document.getElementById('message');
 
-/* ── Build correct answer from the <strong> tags on the page
-       so encoding always matches what the user reads visually ── */
-const boldWords      = Array.from(document.querySelectorAll('.textStory strong'))
+const storyKeyWords   = Array.from(document.querySelectorAll('.textStory strong'))
                             .map(el => el.textContent.trim());
-const ANSWER_FROM_DOM = boldWords.join(' ');   // e.g. "Одного Дня Ми Зустрілися"
+const ANSWER_FROM_DOM = storyKeyWords.join(' ');
 
-/* Static fallbacks in case DOM differs */
 const STATIC_ANSWERS = [
     'одного дня ми зустрілися',
     'одного дня ми зустрілись',
-    'одного дня ми зустр\u0456лися',   // variant і encodings
+    'одного дня ми зустр\u0456лися',
     'одного дня ми зустр\u0456лись',
 ];
 
@@ -31,7 +28,6 @@ const ALL_HINTS = [
     'Єнот дістав крихітний компас. Стрілка наполегливо вказує на початок тексту',
 ];
 
-/* Shuffled queue — refills automatically so hints never repeat until all shown */
 let hintQueue = [];
 
 function nextHint() {
@@ -46,7 +42,7 @@ function normalize(str) {
 }
 
 function navigate() {
-    window.location.href = 'newYear.html';
+    window.location.href = 'new-year.html';
 }
 
 checkBtn.addEventListener('click', () => {
@@ -54,7 +50,6 @@ checkBtn.addEventListener('click', () => {
     const domAnswer = normalize(ANSWER_FROM_DOM);
     const isCorrect = (input === domAnswer)
                    || STATIC_ANSWERS.some(a => normalize(a) === input);
-
     if (isCorrect) {
         message.style.color     = '#8b2252';
         message.style.fontStyle = 'italic';
@@ -62,13 +57,12 @@ checkBtn.addEventListener('click', () => {
         message.classList.remove('hidden');
         setTimeout(navigate, 3500);
         return;
+    } else {
+        message.style.color     = 'rgba(180, 100, 140, 0.9)';
+        message.style.fontStyle = 'italic';
+        message.textContent     = nextHint();
+        message.classList.remove('hidden');
     }
-
-    /* Wrong answer — show random hint, no auto-pass */
-    message.style.color     = 'rgba(180, 100, 140, 0.9)';
-    message.style.fontStyle = 'italic';
-    message.textContent     = nextHint();
-    message.classList.remove('hidden');
 });
 
 inputField.addEventListener('keydown', e => {

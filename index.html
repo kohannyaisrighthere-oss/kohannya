@@ -9,34 +9,26 @@
 </head>
 <body>
 
-  <!-- ── Ambient layers ── -->
   <div class="aurora"></div>
   <div class="aurora-2"></div>
   <div class="moon"></div>
   <canvas id="starCanvas"></canvas>
 
-  <!-- ── Note musicali ── -->
   <div class="music-note" style="left:8%;  animation-duration:16s; animation-delay:0s;   color:#ce93d8; font-size:20px;">♪</div>
   <div class="music-note" style="left:28%; animation-duration:20s; animation-delay:-5s;  color:#b39ddb; font-size:16px;">♫</div>
   <div class="music-note" style="left:52%; animation-duration:14s; animation-delay:-10s; color:#f48fb1; font-size:22px;">♩</div>
   <div class="music-note" style="left:75%; animation-duration:18s; animation-delay:-3s;  color:#ce93d8; font-size:18px;">♬</div>
   <div class="music-note" style="left:92%; animation-duration:22s; animation-delay:-8s;  color:#80cbc4; font-size:16px;">♪</div>
 
-  <!-- ── Floating hearts ── -->
   <div class="heart-float" style="left:18%; animation-duration:24s; animation-delay:-6s;  font-size:14px;">💜</div>
   <div class="heart-float" style="left:80%; animation-duration:20s; animation-delay:-14s; font-size:12px;">✨</div>
 
-  <!-- ── Fireflies ── -->
   <div class="firefly" style="top:35%; left:6%;  background:#ce93d8; box-shadow:0 0 8px 4px rgba(206,147,216,0.6); animation-duration:3s;"></div>
   <div class="firefly" style="top:58%; left:92%; background:#80cbc4; box-shadow:0 0 8px 4px rgba(128,203,196,0.6); animation-duration:4s;   animation-delay:-1.5s;"></div>
   <div class="firefly" style="top:78%; left:50%; background:#ffe082; box-shadow:0 0 8px 4px rgba(255,224,130,0.6); animation-duration:3.5s; animation-delay:-2s;"></div>
 
-  <!-- ══════════════════════════════════════════════════════
-       CONTENT
-       ══════════════════════════════════════════════════════ -->
   <div class="container">
 
-    <!-- Il canvas parte dal top, sfondo nero del video = sfondo body -->
     <div class="video-wrapper">
       <div class="raccoon-wrap">
         <canvas id="raccoonCanvas"></canvas>
@@ -113,11 +105,6 @@
 
   </div>
 
-  <!-- ══════════════════════════════════════════════════════
-       SCRIPTS
-       ══════════════════════════════════════════════════════ -->
-
-  <!-- 1. Heart interaction -->
   <script>
     function showTask() {
       document.getElementById('loveButton').style.display = 'none';
@@ -198,21 +185,14 @@
     }
   </script>
 
-  <!-- 2. Video procione → canvas (sfondo nero, nessuna rimozione pixel necessaria) -->
   <script>
   (function () {
     const canvas = document.getElementById('raccoonCanvas');
     const ctx    = canvas.getContext('2d');
-
-    // Video nascosto con opacity 0.01 (permette autoplay nei browser)
     const video = document.createElement('video');
-    video.setAttribute('loop', '');
-    video.setAttribute('muted', '');
-    video.setAttribute('autoplay', '');
-    video.setAttribute('playsinline', '');
-    video.muted    = true;   // proprietà JS — necessaria per autoplay su Chrome/Safari
+    video.muted = true;
     video.autoplay = true;
-    video.loop     = true;
+    video.loop = true;
     video.style.cssText = 'position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0.01;pointer-events:none;';
     document.body.appendChild(video);
 
@@ -222,13 +202,11 @@
     source.type = 'video/mp4';
     video.appendChild(source);
 
-    // Dimensioni iniziali — aggiornate quando il video carica
     canvas.width  = 400;
     canvas.height = 400;
 
     let running = false;
 
-    // Canvas offscreen per il vignette (evita allocazione ogni frame)
     let vignCanvas = null, vignCtx = null;
 
     function buildVignette(w, h) {
@@ -237,47 +215,39 @@
       vignCanvas.height = h;
       vignCtx = vignCanvas.getContext('2d');
 
-      // Layer 1: gradiente radiale — sfuma lati e angoli
       const cx = w / 2, cy = h / 2;
       const grad = vignCtx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(cx, cy));
       grad.addColorStop(0.00, 'rgba(0,0,0,0)');
-      grad.addColorStop(0.40, 'rgba(0,0,0,0)');
-      grad.addColorStop(0.58, 'rgba(0,0,0,0.15)');
-      grad.addColorStop(0.72, 'rgba(0,0,0,0.55)');
-      grad.addColorStop(0.85, 'rgba(0,0,0,0.88)');
+      grad.addColorStop(0.48, 'rgba(0,0,0,0)');
+      grad.addColorStop(0.65, 'rgba(0,0,0,0.45)');
+      grad.addColorStop(0.80, 'rgba(0,0,0,0.85)');
       grad.addColorStop(1.00, 'rgba(0,0,0,1)');
       vignCtx.fillStyle = grad;
       vignCtx.fillRect(0, 0, w, h);
 
-      // Layer 2: gradiente lineare dal basso — copre il bordo inferiore (il più visibile)
-      const gradBottom = vignCtx.createLinearGradient(0, h * 0.52, 0, h);
+      const gradBottom = vignCtx.createLinearGradient(0, h * 0.62, 0, h);
       gradBottom.addColorStop(0.00, 'rgba(0,0,0,0)');
-      gradBottom.addColorStop(0.35, 'rgba(0,0,0,0.35)');
-      gradBottom.addColorStop(0.65, 'rgba(0,0,0,0.80)');
+      gradBottom.addColorStop(0.40, 'rgba(0,0,0,0.60)');
       gradBottom.addColorStop(1.00, 'rgba(0,0,0,1)');
       vignCtx.fillStyle = gradBottom;
       vignCtx.fillRect(0, 0, w, h);
 
-      // Layer 3: gradiente lineare dall'alto — sfuma il top (più esteso)
-      const gradTop = vignCtx.createLinearGradient(0, 0, 0, h * 0.30);
+      const gradTop = vignCtx.createLinearGradient(0, 0, 0, h * 0.22);
       gradTop.addColorStop(0.00, 'rgba(0,0,0,1)');
-      gradTop.addColorStop(0.30, 'rgba(0,0,0,0.70)');
-      gradTop.addColorStop(0.70, 'rgba(0,0,0,0.20)');
+      gradTop.addColorStop(0.50, 'rgba(0,0,0,0.55)');
       gradTop.addColorStop(1.00, 'rgba(0,0,0,0)');
       vignCtx.fillStyle = gradTop;
       vignCtx.fillRect(0, 0, w, h);
 
-      // Layer 4: gradiente laterale sinistro
-      const gradLeft = vignCtx.createLinearGradient(0, 0, w * 0.18, 0);
-      gradLeft.addColorStop(0.00, 'rgba(0,0,0,0.85)');
+      const gradLeft = vignCtx.createLinearGradient(0, 0, w * 0.20, 0);
+      gradLeft.addColorStop(0.00, 'rgba(0,0,0,1)');
       gradLeft.addColorStop(1.00, 'rgba(0,0,0,0)');
       vignCtx.fillStyle = gradLeft;
       vignCtx.fillRect(0, 0, w, h);
 
-      // Layer 5: gradiente laterale destro
-      const gradRight = vignCtx.createLinearGradient(w * 0.82, 0, w, 0);
+      const gradRight = vignCtx.createLinearGradient(w * 0.80, 0, w, 0);
       gradRight.addColorStop(0.00, 'rgba(0,0,0,0)');
-      gradRight.addColorStop(1.00, 'rgba(0,0,0,0.85)');
+      gradRight.addColorStop(1.00, 'rgba(0,0,0,1)');
       vignCtx.fillStyle = gradRight;
       vignCtx.fillRect(0, 0, w, h);
     }
@@ -287,17 +257,14 @@
         const vw = video.videoWidth;
         const vh = video.videoHeight;
 
-        // Frame intero senza crop — mostra tutto il procione
         if (canvas.width !== vw || canvas.height !== vh) {
           canvas.width  = vw;
           canvas.height = vh;
-          buildVignette(vw, vh);   // ricalcola vignette quando cambiano le dimensioni
+          buildVignette(vw, vh);
         }
 
-        // 1. Disegna il frame video
         ctx.drawImage(video, 0, 0, vw, vh, 0, 0, vw, vh);
 
-        // 2. Applica vignette: destination-out cancella i pixel ai bordi (alpha → 0)
         ctx.globalCompositeOperation = 'destination-out';
         ctx.drawImage(vignCanvas, 0, 0);
         ctx.globalCompositeOperation = 'source-over';
@@ -316,7 +283,6 @@
     video.load();
     setTimeout(start, 500);
 
-    // Fallback: primo gesto utente sblocca autoplay
     ['click', 'touchstart', 'keydown'].forEach(ev =>
       document.addEventListener(ev, () => {
         video.play().catch(() => {});
@@ -326,7 +292,6 @@
   })();
   </script>
 
-  <!-- 3. Stelle + stelle cadenti -->
   <script>
   (function () {
     const canvas = document.getElementById('starCanvas');
@@ -382,7 +347,6 @@
     function draw(t) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       stars.forEach(s => {
-        // Le stelle in cima sono più visibili (sfondo nero puro)
         const baseOpacity = s.y < canvas.height * 0.3 ? 0.5 : 0.25;
         const opacity = baseOpacity + 0.5 * Math.abs(Math.sin(t * s.speed * 0.0008 + s.phase));
         ctx.beginPath();

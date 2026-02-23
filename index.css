@@ -3,7 +3,6 @@
   src: url('fonts/TALE.ttf') format('truetype');
 }
 
-/* ── Keyframes ─────────────────────────────────────────────── */
 @keyframes twinkle {
   0%, 100% { opacity: 1;   transform: scale(1); }
   50%       { opacity: 0.1; transform: scale(0.6); }
@@ -52,10 +51,10 @@
   100% { transform: scale(1.52); }
 }
 
-/* ── Reset ──────────────────────────────────────────────────── */
+
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ── Body: viola profondo in cima → viola acceso in fondo ────── */
+
 body {
   min-height: 100vh;
   background: linear-gradient(
@@ -80,7 +79,6 @@ body {
   text-align: center;
 }
 
-/* ── Aurora — solo zona bassa, non tocca il nero in cima ───── */
 .aurora {
   position: fixed;
   bottom: 0; left: 0;
@@ -110,7 +108,7 @@ body {
   filter: blur(55px);
 }
 
-/* ── Luna — angolo inferiore destro ────────────────────────── */
+
 .moon {
   position: fixed;
   bottom: 70px; right: 70px;
@@ -132,7 +130,6 @@ body {
   filter: blur(3px);
 }
 
-/* ── Star canvas ────────────────────────────────────────────── */
 #starCanvas {
   position: fixed;
   top: 0; left: 0;
@@ -141,7 +138,6 @@ body {
   pointer-events: none;
 }
 
-/* ── Note musicali flottanti ────────────────────────────────── */
 .music-note {
   position: fixed;
   pointer-events: none;
@@ -166,20 +162,17 @@ body {
   animation: twinkle ease-in-out infinite;
 }
 
-/* ── Container principale ───────────────────────────────────── */
 .container {
   position: relative;
   z-index: 10;
   max-width: 700px;
   width: 100%;
   margin: 0 auto;
-  /* padding-top: 0 — il video parte dal bordo superiore */
   padding: 0 16px 120px;
   animation: fadeInUp 1.5s ease both;
   background: transparent;
 }
 
-/* ── Wrapper video: nessun margine top ──────────────────────── */
 .video-wrapper {
   display: flex;
   justify-content: center;
@@ -188,7 +181,6 @@ body {
   background: transparent;
 }
 
-/* ── Canvas procione ────────────────────────────────────── */
 .raccoon-wrap {
   position: relative;
   width: min(70%, 460px);   /* dimensione ridotta, centrata */
@@ -201,12 +193,8 @@ body {
   display: block;
   background: transparent;
 
-  /* Nessuna mask CSS — la vignette è applicata direttamente sul canvas
-     con destination-out per vera trasparenza ai bordi */
-
-  /* Glow viola soffuso intorno al procione */
-  filter: drop-shadow(0 0 40px rgba(90,30,190,0.45))
-          drop-shadow(0 0 80px rgba(50,15,150,0.22));
+  filter: drop-shadow(0 0 30px rgba(7,2,26,0.95))
+          drop-shadow(0 0 60px rgba(7,2,26,0.80));
 
   animation: heartbeat 4s ease-in-out infinite, float 7s ease-in-out infinite;
 }
@@ -216,7 +204,6 @@ body {
   .raccoon-wrap { width: 95%; }
 }
 
-/* ── Divider ────────────────────────────────────────────────── */
 .divider {
   width: 120px;
   height: 1px;
@@ -224,7 +211,6 @@ body {
   margin: 1rem auto 2rem;
 }
 
-/* ── Strofe ─────────────────────────────────────────────────── */
 .verse-section {
   max-width: 620px;
   margin: 0 auto 1.8rem;
@@ -245,7 +231,6 @@ body {
   animation: softGlow 4s ease-in-out infinite;
 }
 
-/* ── Bottone Кохати ─────────────────────────────────────────── */
 .love-btn {
   display: inline-block;
   margin-top: 2.5rem;
@@ -271,14 +256,12 @@ body {
   transform: translateY(-2px);
 }
 
-/* ── Task block ─────────────────────────────────────────────── */
 .task {
   display: none;
   margin-top: 3rem;
   animation: fadeInUp 0.8s ease forwards;
 }
 
-/* ── Heart hold ─────────────────────────────────────────────── */
 .heart-hold-wrap {
   position: relative;
   display: inline-flex;
@@ -324,7 +307,6 @@ body {
   filter: drop-shadow(0 0 32px rgba(255,220,80,1));
 }
 
-/* ── Messaggio ──────────────────────────────────────────────── */
 #loveMessage {
   margin-top: 1.2rem;
   font-size: 1.05rem;
@@ -340,12 +322,9 @@ body {
   text-shadow: 0 0 10px rgba(255,160,60,0.2);
 }
 
-/* ── Scrollbar ──────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(200,150,255,0.3); border-radius: 3px; }
-
-/* ── Mobile ─────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .container           { padding: 0 12px 100px; }
   .love-btn            { font-size: 1rem; padding: 0.75rem 2rem; }
